@@ -1,0 +1,45 @@
+{
+  "name": "jira-mcp",
+  "version": "0.1.0",
+  "description": "MCP server that lets Claude work with Jira Cloud on your behalf via Atlassian OAuth 2.0 (3LO)",
+  "type": "module",
+  "bin": {
+    "jira-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "login": "tsx src/index.ts login",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:adf": "tsx scripts/adf-check.ts"
+  },
+  "keywords": [
+    "mcp",
+    "jira",
+    "atlassian",
+    "oauth",
+    "claude"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "marked": "^18.1.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "jira": {
+      "command": "node",
+      "args": ["/ABSOLUTE/PATH/TO/jira-mcp/dist/index.js"],
+      "env": {
+        "ATLASSIAN_CLIENT_ID": "your-client-id",
+        "ATLASSIAN_CLIENT_SECRET": "your-client-secret"
+      }
+    }
+  }
+}
