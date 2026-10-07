@@ -1,6 +1,6 @@
-# Getting Atlassian OAuth credentials for jira-mcp
+# Getting Atlassian OAuth credentials for Jirum
 
-jira-mcp signs in to Jira with Atlassian OAuth 2.0 (3LO). That needs an **OAuth 2.0 integration** registered in the Atlassian Developer Console. The integration gives you a **Client ID** and a **Secret**; jira-mcp uses them to turn a one-time browser approval into tokens that act as the signed-in user.
+Jirum signs in to Jira with Atlassian OAuth 2.0 (3LO). That needs an **OAuth 2.0 integration** registered in the Atlassian Developer Console. The integration gives you a **Client ID** and a **Secret**; Jirum uses them to turn a one-time browser approval into tokens that act as the signed-in user.
 
 Create the integration **once per team**, not once per person. Every teammate uses the same Client ID and Secret, approves the app with their own Atlassian account, and gets their own tokens on their own machine. Atlassian's guidance is explicit that asking each user to create their own app is not the supported pattern.
 
@@ -17,7 +17,7 @@ Time needed: about 10 minutes. You need an Atlassian account; you do not need to
 ## 2. Create the OAuth 2.0 integration
 
 1. Click **Create** (top right) and choose **OAuth 2.0 integration**.
-2. **Name**: something your teammates will recognise on the consent screen, for example `Claude Jira (jira-mcp)`.
+2. **Name**: something your teammates will recognise on the consent screen, for example `Jirum`.
 3. Tick the terms checkbox and click **Create**.
 
 You land on the app's **Overview** page. The left menu has Overview, Distribution, Permissions, Authorization and Settings. The next sections use each of them.
@@ -49,13 +49,13 @@ JIRA_SCOPES=read:jira-user read:jira-work write:jira-work read:project:jira
 
 The server adds `offline_access` on its own. Everything except the four sprint and board tools works with that reduced set.
 
-Do **not** add admin scopes such as `manage:jira-configuration` or `manage:jira-project`; nothing in jira-mcp needs them.
+Do **not** add admin scopes such as `manage:jira-configuration` or `manage:jira-project`; nothing in Jirum needs them.
 
-Scopes can be changed later, but every user must re-run the login (`jira_connect` with `force=true`, or `jira-mcp login`) before the new scopes take effect for them.
+Scopes can be changed later, but every user must re-run the login (`jira_connect` with `force=true`, or `jirum login`) before the new scopes take effect for them.
 
 ## 4. Set the callback URL
 
-After a user approves the app, Atlassian redirects their browser to this URL with a one-time code. jira-mcp listens on it locally during login.
+After a user approves the app, Atlassian redirects their browser to this URL with a one-time code. Jirum listens on it locally during login.
 
 1. Click **Authorization** in the left menu.
 2. Next to **OAuth 2.0 (3LO)**, click **Add** (or **Configure** if it already exists).
@@ -87,7 +87,7 @@ By default only users in the developer's own Atlassian organisation can consent 
 
 Users will see a notice that the app "has not yet been reviewed by Atlassian" on the consent screen. That is expected for an internal integration; Marketplace review is not required.
 
-## 7. Give the credentials to jira-mcp
+## 7. Give the credentials to Jirum
 
 Each user needs the two values on their own machine. Pick one of these:
 
@@ -98,9 +98,9 @@ Claude Desktop, `~/Library/Application Support/Claude/claude_desktop_config.json
 ```json
 {
   "mcpServers": {
-    "jira": {
+    "jirum": {
       "command": "/absolute/path/to/node",
-      "args": ["/absolute/path/to/jira-mcp/dist/index.js"],
+      "args": ["/absolute/path/to/jirum/dist/index.js"],
       "env": {
         "ATLASSIAN_CLIENT_ID": "paste-client-id",
         "ATLASSIAN_CLIENT_SECRET": "paste-secret"
@@ -113,17 +113,17 @@ Claude Desktop, `~/Library/Application Support/Claude/claude_desktop_config.json
 Claude Code:
 
 ```bash
-claude mcp add jira -s user -e ATLASSIAN_CLIENT_ID=paste-client-id -e ATLASSIAN_CLIENT_SECRET=paste-secret -- node /absolute/path/to/jira-mcp/dist/index.js
+claude mcp add jirum -s user -e ATLASSIAN_CLIENT_ID=paste-client-id -e ATLASSIAN_CLIENT_SECRET=paste-secret -- node /absolute/path/to/jirum/dist/index.js
 ```
 
 **Option B: a config file**, so the secret is not inside the Claude config:
 
 ```bash
-mkdir -p ~/.config/jira-mcp
-cat > ~/.config/jira-mcp/config.json <<'JSON'
+mkdir -p ~/.config/jirum
+cat > ~/.config/jirum/config.json <<'JSON'
 { "clientId": "paste-client-id", "clientSecret": "paste-secret" }
 JSON
-chmod 600 ~/.config/jira-mcp/config.json
+chmod 600 ~/.config/jirum/config.json
 ```
 
 Then register the server without the `env` block / `-e` flags. Environment variables win over the file if both are present.
@@ -146,7 +146,7 @@ node dist/index.js status
 
 Or, from Claude: "check the Jira connection" (it calls `jira_auth_status`).
 
-Tokens are stored in `~/.config/jira-mcp/tokens.json` with permissions `0600`. To disconnect a machine, run `node dist/index.js logout`. To revoke the app entirely for your account, go to https://id.atlassian.com/manage-profile/apps and remove it.
+Tokens are stored in `~/.config/jirum/tokens.json` with permissions `0600`. To disconnect a machine, run `node dist/index.js logout`. To revoke the app entirely for your account, go to https://id.atlassian.com/manage-profile/apps and remove it.
 
 ---
 
@@ -162,7 +162,7 @@ Tokens are stored in `~/.config/jira-mcp/tokens.json` with permissions `0600`. T
 | Login succeeds but a tool returns `Jira 403 … missing a scope` | A scope was not added in **Permissions**, or the user logged in before you added it. | Add the scope, then have the user re-run login with `force=true`. |
 | `accessible-resources` returns no sites | The user's account is not a member of any Jira site, or the site is on a different Atlassian account than the one they logged in with. | Log in with the account that opens `https://<site>.atlassian.net`. |
 | Several sites listed, tools say none is selected | The account can reach more than one Jira site. | Run `node dist/index.js select <site-name>` or set `JIRA_DEFAULT_SITE`. |
-| Browser did not open | Headless or SSH session, or `JIRA_MCP_NO_BROWSER` is set. | Copy the URL printed in the terminal (or returned by `jira_connect`) into any browser on the same machine. |
+| Browser did not open | Headless or SSH session, or `JIRUM_NO_BROWSER` is set. | Copy the URL printed in the terminal (or returned by `jira_connect`) into any browser on the same machine. |
 
 ## Reference
 

@@ -20,8 +20,8 @@ export function buildAuthorizeUrl(cfg: AppConfig, state: string): string {
 
 /** Best-effort: opens the system browser. Returns false if we could not spawn an opener. */
 export function openBrowser(url: string): boolean {
-  // Set JIRA_MCP_NO_BROWSER=1 to only print the URL (tests, headless hosts, SSH sessions).
-  if (process.env.JIRA_MCP_NO_BROWSER) return false;
+  // Set JIRUM_NO_BROWSER=1 to only print the URL (tests, headless hosts, SSH sessions).
+  if (process.env.JIRUM_NO_BROWSER) return false;
   const platform = process.platform;
   let cmd: string;
   let args: string[];

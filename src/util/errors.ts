@@ -10,7 +10,7 @@ export class JiraError extends Error {
 }
 
 export class NotConnectedError extends Error {
-  constructor(message = "Jira is not connected. Run the `jira_connect` tool (or `jira-mcp login` in a terminal) to authorize.") {
+  constructor(message = "Jira is not connected. Run the `jira_connect` tool (or `jirum login` in a terminal) to authorize.") {
     super(message);
     this.name = "NotConnectedError";
   }

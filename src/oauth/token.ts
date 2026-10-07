@@ -99,7 +99,7 @@ export function startLogin(): PendingLogin {
   // Record failures for the next status call; also avoids an unhandled rejection if nobody awaits `done`.
   done.catch((err: Error) => {
     lastLoginError = { message: err.message, at: new Date().toISOString() };
-    console.error(`[jira-mcp] login failed: ${err.message}`);
+    console.error(`[jirum] login failed: ${err.message}`);
   });
   return pending;
 }
@@ -193,7 +193,7 @@ async function refreshTokens(current: TokenState): Promise<TokenState> {
     const e = err as JiraError;
     if (e.status === 400 || e.status === 401 || e.status === 403) {
       throw new NotConnectedError(
-        `Jira session expired or was revoked (${e.message}). Run the jira_connect tool (or \`jira-mcp login\`) to re-authorize.`,
+        `Jira session expired or was revoked (${e.message}). Run the jira_connect tool (or \`jirum login\`) to re-authorize.`,
       );
     }
     throw err;

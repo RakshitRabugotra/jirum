@@ -64,7 +64,7 @@ export function registerAuthTools(server: McpServer): void {
         return text(`Already connected as ${existing.account?.displayName ?? "an Atlassian user"} with ${existing.sites.length} site(s). Pass force=true to re-authorize.`);
       }
       const p = startLogin();
-      console.error(`[jira-mcp] Open this URL to authorize Jira:\n${p.url}`);
+      console.error(`[jirum] Open this URL to authorize Jira:\n${p.url}`);
       const timeout = new Promise<"timeout">((resolve) => setTimeout(() => resolve("timeout"), (waitSeconds ?? 45) * 1000));
       const outcome = await Promise.race([p.done, timeout]);
       if (outcome === "timeout") {

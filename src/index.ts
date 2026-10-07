@@ -25,14 +25,14 @@ async function runCli(argv: string[]): Promise<boolean> {
       const state = await login((url) => console.log(`Open this URL in your browser if it did not open automatically:\n\n${url}\n`));
       console.log(`Connected as ${state.account?.displayName ?? "unknown"}${state.account?.email ? ` <${state.account.email}>` : ""}.`);
       console.log(`Sites: ${state.sites.map((s) => `${s.name} (${s.url})`).join(", ")}`);
-      if (!state.selectedCloudId) console.log("Several sites available. Run `jira-mcp select <name>` or set JIRA_DEFAULT_SITE.");
+      if (!state.selectedCloudId) console.log("Several sites available. Run `jirum select <name>` or set JIRA_DEFAULT_SITE.");
       console.log(`Tokens stored in ${tokenFileLocation()}`);
       return true;
     }
     case "status": {
       const t = readTokens();
       if (!t) {
-        console.log("Not connected. Run `jira-mcp login`.");
+        console.log("Not connected. Run `jirum login`.");
         return true;
       }
       const sel = t.sites.find((s) => s.id === t.selectedCloudId);
@@ -46,7 +46,7 @@ async function runCli(argv: string[]): Promise<boolean> {
       return true;
     }
     case "select": {
-      if (!arg) throw new Error("Usage: jira-mcp select <site name|url|cloudId>");
+      if (!arg) throw new Error("Usage: jirum select <site name|url|cloudId>");
       const s = selectSite(arg);
       console.log(`Selected ${s.name} (${s.url}).`);
       return true;
@@ -63,15 +63,15 @@ async function runCli(argv: string[]): Promise<boolean> {
     case "help":
     case "--help":
     case "-h":
-      console.log(`jira-mcp ${version}
+      console.log(`jirum ${version}
 Usage:
-  jira-mcp            start the MCP server on stdio (used by Claude)
-  jira-mcp login      authorize with Atlassian in the browser
-  jira-mcp status     show connection status
-  jira-mcp sites      list accessible Jira sites
-  jira-mcp select X   select the default site (name, URL or cloud id)
-  jira-mcp logout     delete stored tokens
-  jira-mcp config     print resolved configuration`);
+  jirum            start the MCP server on stdio (used by Claude)
+  jirum login      authorize with Atlassian in the browser
+  jirum status     show connection status
+  jirum sites      list accessible Jira sites
+  jirum select X   select the default site (name, URL or cloud id)
+  jirum logout     delete stored tokens
+  jirum config     print resolved configuration`);
       return true;
     default:
       return false;
@@ -82,14 +82,14 @@ async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   if (argv.length && (await runCli(argv))) return;
 
-  const server = new McpServer({ name: "jira-mcp", version }, { instructions: INSTRUCTIONS });
+  const server = new McpServer({ name: "jirum", version }, { instructions: INSTRUCTIONS });
   registerAllTools(server);
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error(`[jira-mcp] ${version} ready on stdio`);
+  console.error(`[jirum] ${version} ready on stdio`);
 }
 
 main().catch((err) => {
-  console.error(`[jira-mcp] fatal: ${(err as Error).message}`);
+  console.error(`[jirum] fatal: ${(err as Error).message}`);
   process.exit(1);
 });

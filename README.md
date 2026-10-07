@@ -1,4 +1,4 @@
-# jira-mcp
+# Jirum
 
 An MCP server that lets Claude (Desktop or Code) create, search and update Jira Cloud work items **as you**, using Atlassian OAuth 2.0 (3LO). Works with any Atlassian tenant; each user authorizes with their own Atlassian account and tokens stay on their machine.
 
@@ -6,9 +6,9 @@ An MCP server that lets Claude (Desktop or Code) create, search and update Jira 
 Claude Desktop / Claude Code
         │  MCP (stdio)
         ▼
-     jira-mcp  ──── OAuth 2.0 access token ────▶  api.atlassian.com/ex/jira/{cloudId}
+      Jirum    ──── OAuth 2.0 access token ────▶  api.atlassian.com/ex/jira/{cloudId}
         │
-        └── ~/.config/jira-mcp/tokens.json (0600, rotating refresh token)
+        └── ~/.config/jirum/tokens.json (0600, rotating refresh token)
 ```
 
 ## What Claude can do
@@ -32,7 +32,7 @@ Step-by-step with screenshots-level detail and troubleshooting: see [GUIDE.md](G
 
 Atlassian's guidance is to ship **one** OAuth app per integration rather than asking every user to create their own. Whoever owns the integration does this once and shares the client ID/secret with users through your usual secrets channel.
 
-1. Open the [Atlassian Developer Console](https://developer.atlassian.com/console/myapps/) and choose **Create → OAuth 2.0 integration**. Name it (e.g. `Claude Jira`).
+1. Open the [Atlassian Developer Console](https://developer.atlassian.com/console/myapps/) and choose **Create → OAuth 2.0 integration**. Name it (e.g. `Jirum`).
 2. **Permissions → Jira API → Add → Configure**, then add these scopes:
    - Classic tab: `read:jira-user`, `read:jira-work`, `write:jira-work`
    - Granular tab: `read:project:jira`
@@ -50,19 +50,19 @@ Skip step 3 and remove the Jira Software scopes from `JIRA_SCOPES` if you do not
 ## 2. Install
 
 ```bash
-git clone <this repo> jira-mcp
-cd jira-mcp
+git clone https://github.com/RakshitRabugotra/jirum.git
+cd jirum
 pnpm install
 pnpm build
 ```
 
-Provide the credentials either as environment variables (set them in the Claude config below) or in `~/.config/jira-mcp/config.json`:
+Provide the credentials either as environment variables (set them in the Claude config below) or in `~/.config/jirum/config.json`:
 
 ```json
 { "clientId": "…", "clientSecret": "…" }
 ```
 
-See `.env.example` for all options (`JIRA_OAUTH_REDIRECT_URI`, `JIRA_SCOPES`, `JIRA_DEFAULT_SITE`, `JIRA_MCP_CONFIG_DIR`).
+See `.env.example` for all options (`JIRA_OAUTH_REDIRECT_URI`, `JIRA_SCOPES`, `JIRA_DEFAULT_SITE`, `JIRUM_CONFIG_DIR`).
 
 ## 3. Authorize
 
@@ -90,9 +90,9 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) a
 ```json
 {
   "mcpServers": {
-    "jira": {
+    "jirum": {
       "command": "node",
-      "args": ["/absolute/path/to/jira-mcp/dist/index.js"],
+      "args": ["/absolute/path/to/jirum/dist/index.js"],
       "env": {
         "ATLASSIAN_CLIENT_ID": "…",
         "ATLASSIAN_CLIENT_SECRET": "…"
@@ -107,7 +107,7 @@ Restart Claude Desktop. Use the full path to `node` (`which node`) if Claude can
 ## 5. Connect to Claude Code
 
 ```bash
-claude mcp add jira -s user -e ATLASSIAN_CLIENT_ID=… -e ATLASSIAN_CLIENT_SECRET=… -- node /absolute/path/to/jira-mcp/dist/index.js
+claude mcp add jirum -s user -e ATLASSIAN_CLIENT_ID=… -e ATLASSIAN_CLIENT_SECRET=… -- node /absolute/path/to/jirum/dist/index.js
 ```
 
 Both clients share the same token file, so you only authorize once per machine.
@@ -139,6 +139,6 @@ pnpm test:adf       # markdown -> ADF conversion checks
 
 ## Security notes
 
-- Tokens are stored in `~/.config/jira-mcp/tokens.json` with mode 0600. Delete it (or run `jira-mcp logout`) to disconnect this machine; revoke the app at https://id.atlassian.com/manage-profile/apps to revoke entirely.
+- Tokens are stored in `~/.config/jirum/tokens.json` with mode 0600. Delete it (or run `jirum logout`) to disconnect this machine; revoke the app at https://id.atlassian.com/manage-profile/apps to revoke entirely.
 - Atlassian 3LO does not support PKCE, so the client secret is required for token exchange. Treat it like any other shared app secret.
 - `jira_delete_issue` is the only destructive tool; it is annotated as such so clients can require confirmation.

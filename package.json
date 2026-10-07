@@ -1,10 +1,10 @@
 {
-  "name": "jira-mcp",
+  "name": "jirum",
   "version": "0.1.0",
   "description": "MCP server that lets Claude work with Jira Cloud on your behalf via Atlassian OAuth 2.0 (3LO)",
   "type": "module",
   "bin": {
-    "jira-mcp": "dist/index.js"
+    "jirum": "dist/index.js"
   },
   "files": [
     "dist"

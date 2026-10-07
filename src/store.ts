@@ -34,7 +34,7 @@ export function readTokens(): TokenState | undefined {
   try {
     return JSON.parse(readFileSync(p, "utf8")) as TokenState;
   } catch (err) {
-    console.error(`[jira-mcp] could not parse ${p}: ${(err as Error).message}`);
+    console.error(`[jirum] could not parse ${p}: ${(err as Error).message}`);
     return undefined;
   }
 }

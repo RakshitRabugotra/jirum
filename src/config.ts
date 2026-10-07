@@ -34,7 +34,7 @@ interface FileConfig {
 }
 
 export function configDir(): string {
-  return process.env.JIRA_MCP_CONFIG_DIR || join(homedir(), ".config", "jira-mcp");
+  return process.env.JIRUM_CONFIG_DIR || join(homedir(), ".config", "jirum");
 }
 
 function readFileConfig(dir: string): FileConfig {
@@ -51,7 +51,7 @@ let cached: AppConfig | undefined;
 
 /**
  * Resolves configuration. Environment variables win over
- * ~/.config/jira-mcp/config.json, which wins over defaults.
+ * ~/.config/jirum/config.json, which wins over defaults.
  * Client ID/secret are only required when an OAuth flow or token refresh runs,
  * so this never throws; callers check `clientId`/`clientSecret` when they need them.
  */
